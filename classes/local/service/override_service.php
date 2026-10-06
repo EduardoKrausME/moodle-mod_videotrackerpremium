@@ -14,7 +14,7 @@ class override_service {
     private static function get_or_create(int $activityid, int $userid): stdClass {
         global $DB;
 
-        $record = $DB->get_record('vtrackpremium_override', ['activityid' => $activityid, 'userid' => $userid]);
+        $record = $DB->get_record('videotrackerpremium_override', ['activityid' => $activityid, 'userid' => $userid]);
         if ($record) {
             return $record;
         }
@@ -28,7 +28,7 @@ class override_service {
             'timecreated' => $now,
             'timemodified' => $now,
         ];
-        $record->id = $DB->insert_record('vtrackpremium_override', $record);
+        $record->id = $DB->insert_record('videotrackerpremium_override', $record);
         return $record;
     }
 
@@ -43,7 +43,7 @@ class override_service {
     ): void {
         global $DB;
 
-        $DB->insert_record('vtrackpremium_history', (object)[
+        $DB->insert_record('videotrackerpremium_history', (object)[
             'activityid' => $activityid,
             'userid' => $userid,
             'actorid' => $actorid,
@@ -73,7 +73,7 @@ class override_service {
             $override->adminnote = clean_param($note, PARAM_TEXT);
         }
         $override->timemodified = time();
-        $DB->update_record('vtrackpremium_override', $override);
+        $DB->update_record('videotrackerpremium_override', $override);
 
         $action = $deadline > $olddeadline ? 'deadline_extended' : 'deadline_changed';
         self::history((int)$activity->id, $userid, $actorid, $action, $olddeadline, $deadline, $note);
@@ -113,7 +113,7 @@ class override_service {
             $override->adminnote = clean_param($note, PARAM_TEXT);
         }
         $override->timemodified = time();
-        $DB->update_record('vtrackpremium_override', $override);
+        $DB->update_record('videotrackerpremium_override', $override);
 
         self::history(
             (int)$activity->id,
@@ -172,7 +172,7 @@ class override_service {
         $override = self::get_or_create((int)$activity->id, $userid);
         $override->adminnote = clean_param($note, PARAM_TEXT);
         $override->timemodified = time();
-        $DB->update_record('vtrackpremium_override', $override);
+        $DB->update_record('videotrackerpremium_override', $override);
         self::history((int)$activity->id, $userid, $actorid, 'note_updated', 0, 0, $override->adminnote);
     }
 }
