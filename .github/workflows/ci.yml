@@ -56,6 +56,13 @@ jobs:
         ref: master
         path: extra-plugins/video_bridge
 
+    - name: Check out AI Bridge
+      uses: actions/checkout@v4
+      with:
+        repository: EduardoKrausME/moodle-local_ai_bridge
+        ref: master
+        path: extra-plugins/ai_bridge
+
     - name: Setup PHP ${{ matrix.config.php }}
       uses: shivammathur/setup-php@v2
       with:
