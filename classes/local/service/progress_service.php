@@ -108,7 +108,28 @@ class progress_service {
         }
 
         if (!$state->completed && $percent >= (int)$activity->minimumpercent) {
-            $completiontime = $progress && !empty($progress->timemodified) ? (int)$progress->timemodified : $now;
+            $factory = \core\lock\lock_config::get_lock_factory('mod_videotrackerpremium');
+            $lock = $factory->get_lock(
+                'completion_' . (int)$activity->id . '_' . $userid,
+                5
+            );
+            if (!$lock) {
+                return $state;
+            }
+
+            try {
+                $lateststate = $DB->get_record('vtrackpremium_state', [
+                    'activityid' => $activity->id,
+                    'userid' => $userid,
+                ]);
+                if ($lateststate && !empty($lateststate->completed)) {
+                    return $lateststate;
+                }
+                if ($lateststate) {
+                    $state = $lateststate;
+                }
+
+                $completiontime = $progress && !empty($progress->timemodified) ? (int)$progress->timemodified : $now;
             $state->completed = 1;
             $state->completiontime = $completiontime;
             $state->completionpercent = $percent;
@@ -153,6 +174,9 @@ class progress_service {
                     ],
                 ]);
                 $event->trigger();
+            }
+            } finally {
+                $lock->release();
             }
         } else {
             $state->completionpercent = max((int)$state->completionpercent, $percent);
