@@ -109,6 +109,7 @@ function videotrackerpremium_update_instance(stdClass $data, ?mod_videotrackerpr
         (string)$data->sourceconfig
     );
     $mediachanged = $previoushash !== $newhash;
+    $thresholdchanged = (int)$previous->minimumpercent !== (int)$data->minimumpercent;
 
     $data->timemodified = time();
     $result = $DB->update_record('videotrackerpremium', $data);
@@ -123,6 +124,17 @@ function videotrackerpremium_update_instance(stdClass $data, ?mod_videotrackerpr
                 'mod_videotrackerpremium',
                 (int)$data->id,
                 $previoushash
+            );
+        }
+
+        if ($mediachanged || $thresholdchanged) {
+            bridge_progress::set_threshold(
+                $context->id,
+                'mod_videotrackerpremium',
+                (int)$data->id,
+                $newhash,
+                (int)$data->minimumpercent,
+                'mod_videotrackerpremium'
             );
             $DB->delete_records('vtrackpremium_state', ['activityid' => (int)$data->id]);
 
