@@ -163,7 +163,8 @@ function videotrackerpremium_update_instance(stdClass $data, ?mod_videotrackerpr
 
     reminder_service::cancel_activity_pending(
         (int)$data->id,
-        $mediachanged ? 'mediachanged' : 'activityupdated'
+        $mediachanged ? 'mediachanged' : ($thresholdchanged ? 'thresholdchanged' : 'activityupdated'),
+        $mediachanged || $thresholdchanged
     );
     return $result;
 }
