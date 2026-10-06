@@ -172,8 +172,8 @@ foreach ($users as $userid => $user) {
         'deadline' => $status['deadline']
             ? userdate($status['deadline'], get_string('strftimedatetime', 'langconfig'))
             : get_string('nodeadline', 'videotrackerpremium'),
-        'lastaccess' => !empty($progresses[$userid]->timemodified)
-            ? userdate((int)$progresses[$userid]->timemodified, get_string('strftimedatetime', 'langconfig'))
+        'lastaccess' => $status['lastaccess']
+            ? userdate($status['lastaccess'], get_string('strftimedatetime', 'langconfig'))
             : '-',
         'lastsession' => $status['lastsession']
             ? userdate($status['lastsession'], get_string('strftimedatetime', 'langconfig'))
