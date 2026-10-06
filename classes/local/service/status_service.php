@@ -73,7 +73,9 @@ class status_service {
             'userid' => $userid,
         ]);
         $deadline = self::effective_deadline($activity, $override);
-        $extended = $override && !empty($override->deadline) && (int)$override->deadline !== (int)$activity->deadline;
+        $originaldeadline = (int)$activity->deadline;
+        $extended = $override && !empty($override->deadline) &&
+            ($originaldeadline <= 0 || (int)$override->deadline > $originaldeadline);
         $completed = $state && !empty($state->completed);
 
         $status = self::classify(
@@ -111,7 +113,7 @@ class status_service {
             'deadline' => $deadline,
             'extended' => (bool)$extended,
             'waived' => (bool)($override->waived ?? false),
-            'lastsession' => $progress ? (int)$progress->timemodified : 0,
+            'lastsession' => $progress ? (int)($progress->lastsession ?? 0) : 0,
             'lastreminder' => $lastreminder,
             'completiontime' => $completiontime,
             'compliance' => $compliance,
