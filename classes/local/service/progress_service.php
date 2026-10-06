@@ -24,20 +24,22 @@ class progress_service {
             return [];
         }
         $hash = self::media_hash($activity);
-        if (method_exists(bridge_progress::class, 'get_progress_batch')) {
-            return bridge_progress::get_progress_batch(
-                $context->id, 'mod_videotrackerpremium', (int)$activity->id, $hash, $userids
-            );
-        }
-
-        $records = [];
-        foreach ($userids as $userid) {
-            $progress = bridge_progress::get_progress(
-                $context->id, 'mod_videotrackerpremium', (int)$activity->id, $hash, $userid
-            );
-            if ($progress) {
-                $records[$userid] = $progress;
-            }
+        $records = bridge_progress::get_progress_batch(
+            $context->id,
+            'mod_videotrackerpremium',
+            (int)$activity->id,
+            $hash,
+            $userids
+        );
+        $sessions = bridge_progress::get_latest_session_times(
+            $context->id,
+            'mod_videotrackerpremium',
+            (int)$activity->id,
+            $hash,
+            $userids
+        );
+        foreach ($records as $userid => $record) {
+            $record->lastsession = (int)($sessions[(int)$userid] ?? 0);
         }
         return $records;
     }
@@ -113,6 +115,16 @@ class progress_service {
             $state->laststatus = 'completed';
             $state->timemodified = $now;
             $DB->update_record('vtrackpremium_state', $state);
+            $DB->insert_record('vtrackpremium_history', (object)[
+                'activityid' => (int)$activity->id,
+                'userid' => $userid,
+                'actorid' => 0,
+                'action' => 'completed',
+                'olddeadline' => 0,
+                'newdeadline' => 0,
+                'details' => 'percent=' . $percent,
+                'timecreated' => $completiontime,
+            ]);
 
             reminder_service::cancel_user_pending((int)$activity->id, $userid, 'completed');
             reminder_service::queue_completion_confirmation($activity, $userid, $now);
