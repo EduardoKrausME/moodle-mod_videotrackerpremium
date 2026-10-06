@@ -125,6 +125,16 @@ function videotrackerpremium_update_instance(stdClass $data, ?mod_videotrackerpr
                 $previoushash
             );
             $DB->delete_records('vtrackpremium_state', ['activityid' => (int)$data->id]);
+
+            $cm = get_coursemodule_from_id(
+                'videotrackerpremium',
+                (int)$data->coursemodule,
+                0,
+                false,
+                MUST_EXIST
+            );
+            $course = get_course($cm->course);
+            (new completion_info($course))->reset_all_state($cm);
         }
     }
 
