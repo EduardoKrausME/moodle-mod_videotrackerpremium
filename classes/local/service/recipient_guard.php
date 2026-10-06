@@ -7,6 +7,45 @@ use context_module;
  * Validates that operational actions only target authorised enrolled users.
  */
 class recipient_guard {
+    /**
+     * Returns active enrolled users who are tracked by Moodle completion reports.
+     *
+     * @param context_module $context Activity context.
+     * @param string $fields User fields requested from the enrolment API.
+     * @return array Users indexed by id.
+     */
+    public static function get_eligible_users(context_module $context, string $fields = 'u.id'): array {
+        $cm = get_coursemodule_from_id(
+            'videotrackerpremium',
+            $context->instanceid,
+            0,
+            false,
+            MUST_EXIST
+        );
+        $course = get_course($cm->course);
+        $completion = new \completion_info($course);
+        $tracked = $completion->get_tracked_users();
+        if (!$tracked) {
+            return [];
+        }
+
+        $enrolled = get_enrolled_users(
+            $context,
+            'mod/videotrackerpremium:view',
+            0,
+            $fields,
+            null,
+            0,
+            0,
+            true
+        );
+
+        return array_intersect_key(
+            $enrolled,
+            array_fill_keys(array_map('intval', array_keys($tracked)), true)
+        );
+    }
+
     public static function filter_authorised(context_module $context, array $requested, ?int $actorid = null): array {
         global $USER;
 
@@ -16,16 +55,7 @@ class recipient_guard {
             return [];
         }
 
-        $enrolled = get_enrolled_users(
-            $context,
-            'mod/videotrackerpremium:view',
-            0,
-            'u.id',
-            null,
-            0,
-            0,
-            true
-        );
+        $enrolled = self::get_eligible_users($context, 'u.id');
         $allowed = array_fill_keys(array_map('intval', array_keys($enrolled)), true);
 
         $cm = get_coursemodule_from_id('videotrackerpremium', $context->instanceid, 0, false, MUST_EXIST);
