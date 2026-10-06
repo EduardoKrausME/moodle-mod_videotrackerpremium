@@ -97,19 +97,6 @@ if ($groupid) {
 $userids = array_map('intval', array_keys($users));
 $progresses = progress_service::get_progress_batch($activity, $context, $userids);
 
-$lastaccess = [];
-if ($userids) {
-    [$insql, $inparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid');
-    $records = $DB->get_records_select(
-        'user_lastaccess',
-        "courseid = :courseid AND userid {$insql}",
-        ['courseid' => $course->id] + $inparams
-    );
-    foreach ($records as $record) {
-        $lastaccess[(int)$record->userid] = (int)$record->timeaccess;
-    }
-}
-
 $cards = [
     'total' => count($users),
     'completed' => 0,
@@ -187,8 +174,8 @@ foreach ($users as $userid => $user) {
         'deadline' => $status['deadline']
             ? userdate($status['deadline'], get_string('strftimedatetime', 'langconfig'))
             : get_string('nodeadline', 'videotrackerpremium'),
-        'lastaccess' => !empty($lastaccess[$userid])
-            ? userdate($lastaccess[$userid], get_string('strftimedatetime', 'langconfig'))
+        'lastaccess' => !empty($progresses[$userid]->timemodified)
+            ? userdate((int)$progresses[$userid]->timemodified, get_string('strftimedatetime', 'langconfig'))
             : '-',
         'lastsession' => $status['lastsession']
             ? userdate($status['lastsession'], get_string('strftimedatetime', 'langconfig'))
