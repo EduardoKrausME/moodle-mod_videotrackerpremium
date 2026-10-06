@@ -58,7 +58,7 @@ class backup_videotrackerpremium_activity_structure_step extends backup_activity
         $state = new backup_nested_element(
             'state',
             ['id'],
-            ['userid', 'completed', 'completiontime', 'completionpercent', 'laststatus', 'timemodified']
+            ['userid', 'completed', 'completiontime', 'completionpercent', 'laststatus', 'lastaccess', 'timemodified']
         );
 
         $activity->add_child($overrides);
