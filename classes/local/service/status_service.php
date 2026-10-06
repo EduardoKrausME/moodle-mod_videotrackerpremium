@@ -64,11 +64,11 @@ class status_service {
             $progress = $batch[$userid] ?? null;
         }
         $percent = $progress ? (int)$progress->percent : 0;
-        $override = $DB->get_record('vtrackpremium_override', [
+        $override = $DB->get_record('videotrackerpremium_override', [
             'activityid' => $activity->id,
             'userid' => $userid,
         ]);
-        $state = $DB->get_record('vtrackpremium_state', [
+        $state = $DB->get_record('videotrackerpremium_state', [
             'activityid' => $activity->id,
             'userid' => $userid,
         ]);
@@ -91,7 +91,7 @@ class status_service {
 
         $lastreminder = (int)$DB->get_field_sql(
             "SELECT MAX(timesent)
-               FROM {vtrackpremium_notify}
+               FROM {videotrackerpremium_notify}
               WHERE activityid = :activityid
                 AND userid = :userid
                 AND status = :status",
