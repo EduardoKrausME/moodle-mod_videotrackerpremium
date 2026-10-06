@@ -53,10 +53,20 @@ if ($canhistory && $userids) {
         ['activityid' => $activity->id] + $params,
         'timecreated ASC'
     );
+    $actorids = array_values(array_unique(array_filter(array_map(
+        static fn($item): int => (int)$item->actorid,
+        $history
+    ))));
+    $actors = $actorids ? $DB->get_records_list('user', 'id', $actorids) : [];
+
     foreach ($history as $item) {
+        $actor = !empty($item->actorid) && isset($actors[(int)$item->actorid])
+            ? fullname($actors[(int)$item->actorid])
+            : '-';
         $parts = [
             userdate($item->timecreated, get_string('strftimedatetime', 'langconfig')),
             (string)$item->action,
+            get_string('user') . ': ' . $actor,
         ];
         if ($item->olddeadline || $item->newdeadline) {
             $parts[] = ($item->olddeadline
