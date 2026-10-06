@@ -120,6 +120,7 @@
                 <FIELD NAME="completiontime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="completionpercent" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="laststatus" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="notstarted" SEQUENCE="false"/>
+                <FIELD NAME="lastaccess" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
