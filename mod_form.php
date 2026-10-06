@@ -66,13 +66,13 @@ class mod_videotrackerpremium_mod_form extends moodleform_mod {
             $mform->hideIf($field, 'remindersenabled', 'eq', 0);
         }
         $mform->hideIf('sendavailable', 'remindersenabled', 'eq', 0);
-        $mform->addElement('select', 'repeatlateevery', get_string('repeatlateevery', 'videotrackerpremium'), [
-            0 => get_string('never'),
-            1 => get_string('everyday', 'videotrackerpremium'),
-            2 => get_string('everyxdays', 'videotrackerpremium', 2),
-            3 => get_string('everyxdays', 'videotrackerpremium', 3),
-            7 => get_string('everyxdays', 'videotrackerpremium', 7),
-        ]);
+        $mform->addElement(
+            'text',
+            'repeatlateevery',
+            get_string('repeatlateevery', 'videotrackerpremium'),
+            ['size' => 6]
+        );
+        $mform->setType('repeatlateevery', PARAM_INT);
         $mform->setDefault('repeatlateevery', 3);
         $mform->hideIf('repeatlateevery', 'remindersenabled', 'eq', 0);
 
@@ -158,6 +158,10 @@ class mod_videotrackerpremium_mod_form extends moodleform_mod {
         if (!empty($data['availablefrom']) && !empty($data['deadline']) &&
                 (int)$data['availablefrom'] >= (int)$data['deadline']) {
             $errors['deadline'] = get_string('deadlineafteropen', 'videotrackerpremium');
+        }
+        $repeatlateevery = (int)($data['repeatlateevery'] ?? 0);
+        if ($repeatlateevery < 0 || $repeatlateevery > 3650) {
+            $errors['repeatlateevery'] = get_string('invalidrepeatinterval', 'videotrackerpremium');
         }
         return $errors;
     }
