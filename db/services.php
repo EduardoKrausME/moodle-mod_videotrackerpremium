@@ -7,7 +7,6 @@ $functions = [
         'description' => 'Apply an authorised operational action to selected learners.',
         'type' => 'write',
         'ajax' => true,
-        'capabilities' => 'mod/videotrackerpremium:manageoverrides',
     ],
     'mod_videotrackerpremium_get_status' => [
         'classname' => '\mod_videotrackerpremium\external\get_status',
