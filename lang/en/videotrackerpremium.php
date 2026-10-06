@@ -139,3 +139,4 @@ $string['historydeadline'] = 'Deadline changed from {$a->old} to {$a->new}.';
 $string['deadlineextendedcolumn'] = 'Deadline extended';
 $string['extended'] = 'Deadline extended';
 $string['noactivities'] = 'There are no Video Tracker Premium activities in this course.';
+$string['invalidrepeatinterval'] = 'Repeat interval must be between 0 and 3650 days.';
