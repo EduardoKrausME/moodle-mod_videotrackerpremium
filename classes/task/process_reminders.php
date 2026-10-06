@@ -31,7 +31,16 @@ class process_reminders extends scheduled_task {
 
             $context = context_module::instance($cm->id);
             progress_service::ensure_threshold($activity, $context);
-            $users = get_enrolled_users($context, 'mod/videotrackerpremium:view', 0, 'u.id');
+            $users = get_enrolled_users(
+                $context,
+                'mod/videotrackerpremium:view',
+                0,
+                'u.id',
+                null,
+                0,
+                0,
+                true
+            );
             $userids = array_map('intval', array_keys($users));
 
             if (count($userids) > 100) {
