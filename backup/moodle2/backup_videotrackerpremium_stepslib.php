@@ -77,19 +77,19 @@ class backup_videotrackerpremium_activity_structure_step extends backup_activity
 
         if ($userinfo) {
             $override->set_source_table(
-                'vtrackpremium_override',
+                'videotrackerpremium_override',
                 ['activityid' => backup::VAR_PARENTID]
             );
             $history->set_source_table(
-                'vtrackpremium_history',
+                'videotrackerpremium_history',
                 ['activityid' => backup::VAR_PARENTID]
             );
             $notification->set_source_table(
-                'vtrackpremium_notify',
+                'videotrackerpremium_notify',
                 ['activityid' => backup::VAR_PARENTID]
             );
             $state->set_source_table(
-                'vtrackpremium_state',
+                'videotrackerpremium_state',
                 ['activityid' => backup::VAR_PARENTID]
             );
 
