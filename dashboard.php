@@ -60,7 +60,11 @@ $users = get_enrolled_users(
     $context,
     'mod/videotrackerpremium:view',
     0,
-    'u.id,u.firstname,u.lastname,u.email'
+    'u.id,u.firstname,u.lastname,u.email',
+    null,
+    0,
+    0,
+    true
 );
 $authorisedids = recipient_guard::filter_authorised(
     $context,
