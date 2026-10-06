@@ -30,9 +30,12 @@ progress_service::ensure_threshold($activity, $context);
 $progresses = progress_service::get_progress_batch($activity, $context, [(int)$USER->id]);
 $progress = $progresses[$USER->id] ?? null;
 progress_service::sync_completion($activity, $context, (int)$USER->id, $progress);
-$status = status_service::get_user_status($activity, $context, (int)$USER->id, $progress);
-
 $now = time();
+$DB->set_field('vtrackpremium_state', 'lastaccess', $now, [
+    'activityid' => (int)$activity->id,
+    'userid' => (int)$USER->id,
+]);
+$status = status_service::get_user_status($activity, $context, (int)$USER->id, $progress);
 $manager = new source_manager();
 $maymanage = has_capability('mod/videotrackerpremium:viewreport', $context);
 $available = empty($activity->availablefrom) || $now >= (int)$activity->availablefrom;
