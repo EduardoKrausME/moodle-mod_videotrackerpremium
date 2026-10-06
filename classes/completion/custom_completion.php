@@ -27,7 +27,7 @@ class custom_completion extends activity_custom_completion {
             return COMPLETION_COMPLETE;
         }
 
-        $override = $DB->get_record('vtrackpremium_override', [
+        $override = $DB->get_record('videotrackerpremium_override', [
             'activityid' => $activity->id,
             'userid' => $this->userid,
         ]);
