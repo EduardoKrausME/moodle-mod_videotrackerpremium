@@ -146,26 +146,46 @@ class reminder_service {
     public static function claim_due(int $limit = 200): array {
         global $DB;
 
+        $now = time();
         $records = $DB->get_records_select(
             'vtrackpremium_notify',
-            'status = :status AND scheduledfor <= :now',
-            ['status' => 'pending', 'now' => time()],
+            'scheduledfor <= :now AND (' .
+                'status = :pending OR (status = :queued AND timemodified <= :stale)' .
+            ')',
+            [
+                'now' => $now,
+                'pending' => 'pending',
+                'queued' => 'queued',
+                'stale' => $now - HOURSECS,
+            ],
             'scheduledfor ASC',
-            'id',
+            'id,status',
             0,
             $limit
         );
+
         $ids = [];
         foreach ($records as $record) {
-            $changed = $DB->set_field(
+            $current = $DB->get_record(
                 'vtrackpremium_notify',
-                'status',
-                'queued',
-                ['id' => $record->id, 'status' => 'pending']
+                ['id' => $record->id],
+                'id,status,timemodified',
+                IGNORE_MISSING
             );
-            if ($changed) {
-                $ids[] = (int)$record->id;
+            if (!$current) {
+                continue;
             }
+            if ($current->status === 'queued' && (int)$current->timemodified > ($now - HOURSECS)) {
+                continue;
+            }
+            if (!in_array($current->status, ['pending', 'queued'], true)) {
+                continue;
+            }
+
+            $current->status = 'queued';
+            $current->timemodified = $now;
+            $DB->update_record('vtrackpremium_notify', $current);
+            $ids[] = (int)$current->id;
         }
         return $ids;
     }
