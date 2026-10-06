@@ -60,6 +60,7 @@ class provider implements
             'completiontime' => 'privacy:metadata:state',
             'completionpercent' => 'privacy:metadata:state',
             'laststatus' => 'privacy:metadata:state',
+            'lastaccess' => 'privacy:metadata:state',
         ], 'privacy:metadata:state');
 
         return $collection;
@@ -214,6 +215,9 @@ class provider implements
                             : null,
                         'completionpercent' => (int)$state->completionpercent,
                         'laststatus' => $state->laststatus,
+                        'lastaccess' => !empty($state->lastaccess)
+                            ? transform::datetime($state->lastaccess)
+                            : null,
                         'timemodified' => transform::datetime($state->timemodified),
                     ]
                 );
