@@ -16,7 +16,16 @@ class recipient_guard {
             return [];
         }
 
-        $enrolled = get_enrolled_users($context, 'mod/videotrackerpremium:view', 0, 'u.id');
+        $enrolled = get_enrolled_users(
+            $context,
+            'mod/videotrackerpremium:view',
+            0,
+            'u.id',
+            null,
+            0,
+            0,
+            true
+        );
         $allowed = array_fill_keys(array_map('intval', array_keys($enrolled)), true);
 
         $cm = get_coursemodule_from_id('videotrackerpremium', $context->instanceid, 0, false, MUST_EXIST);
