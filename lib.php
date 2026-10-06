@@ -1,6 +1,7 @@
 <?php
 // This file is part of Moodle - http://moodle.org/.
 
+use local_video_bridge\progress\manager as bridge_progress;
 use local_video_bridge\source\manager as source_manager;
 use mod_videotrackerpremium\local\service\reminder_service;
 
@@ -126,7 +127,13 @@ function videotrackerpremium_delete_instance(int $id): bool {
 
     $cm = get_coursemodule_from_instance('videotrackerpremium', $id, $activity->course, false, IGNORE_MISSING);
     if ($cm) {
-        (new source_manager())->delete_files(context_module::instance($cm->id));
+        $context = context_module::instance($cm->id);
+        (new source_manager())->delete_files($context);
+        bridge_progress::delete_consumer(
+            $context->id,
+            'mod_videotrackerpremium',
+            (int)$activity->id
+        );
     }
 
     $transaction = $DB->start_delegated_transaction();
