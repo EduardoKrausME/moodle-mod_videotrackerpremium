@@ -56,15 +56,9 @@ function videotrackerpremium_filter_date(string $value, bool $endofday = false):
 $deadlinefrom = videotrackerpremium_filter_date($deadlinefromraw);
 $deadlineto = videotrackerpremium_filter_date($deadlinetoraw, true);
 
-$users = get_enrolled_users(
+$users = recipient_guard::get_eligible_users(
     $context,
-    'mod/videotrackerpremium:view',
-    0,
-    'u.id,u.firstname,u.lastname,u.email',
-    null,
-    0,
-    0,
-    true
+    'u.id,u.firstname,u.lastname,u.email'
 );
 $authorisedids = recipient_guard::filter_authorised(
     $context,
