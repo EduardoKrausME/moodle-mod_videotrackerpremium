@@ -129,52 +129,63 @@ class progress_service {
                     $state = $lateststate;
                 }
 
-                $completiontime = $progress && !empty($progress->timemodified) ? (int)$progress->timemodified : $now;
-            $state->completed = 1;
-            $state->completiontime = $completiontime;
-            $state->completionpercent = $percent;
-            $state->laststatus = 'completed';
-            $state->timemodified = $now;
-            $DB->update_record('vtrackpremium_state', $state);
-            $DB->insert_record('vtrackpremium_history', (object)[
-                'activityid' => (int)$activity->id,
-                'userid' => $userid,
-                'actorid' => 0,
-                'action' => 'completed',
-                'olddeadline' => 0,
-                'newdeadline' => 0,
-                'details' => 'percent=' . $percent,
-                'timecreated' => $completiontime,
-            ]);
-
-            reminder_service::cancel_user_pending((int)$activity->id, $userid, 'completed');
-            if (!empty($activity->remindersenabled)) {
-                reminder_service::queue_completion_confirmation($activity, $userid, $now);
-            }
-
-            if (!empty($activity->completionrequired)) {
-                $cm = get_coursemodule_from_instance(
-                    'videotrackerpremium', $activity->id, $activity->course, false, MUST_EXIST
-                );
-                $course = get_course($activity->course);
-                (new completion_info($course))->update_state($cm, COMPLETION_UNKNOWN, $userid, true);
-            }
-
-            $deadline = status_service::effective_deadline($activity, $override);
-            if ($deadline > 0 && $completiontime > $deadline) {
-                $event = activity_completed_late::create([
-                    'objectid' => $state->id,
-                    'context' => $context,
-                    'relateduserid' => $userid,
-                    'other' => [
-                        'activityid' => (int)$activity->id,
-                        'deadline' => $deadline,
-                        'completiontime' => $completiontime,
-                        'percent' => $percent,
-                    ],
+                $completiontime = $progress && !empty($progress->timemodified)
+                    ? (int)$progress->timemodified
+                    : $now;
+                $state->completed = 1;
+                $state->completiontime = $completiontime;
+                $state->completionpercent = $percent;
+                $state->laststatus = 'completed';
+                $state->timemodified = $now;
+                $DB->update_record('vtrackpremium_state', $state);
+                $DB->insert_record('vtrackpremium_history', (object)[
+                    'activityid' => (int)$activity->id,
+                    'userid' => $userid,
+                    'actorid' => 0,
+                    'action' => 'completed',
+                    'olddeadline' => 0,
+                    'newdeadline' => 0,
+                    'details' => 'percent=' . $percent,
+                    'timecreated' => $completiontime,
                 ]);
-                $event->trigger();
-            }
+
+                reminder_service::cancel_user_pending((int)$activity->id, $userid, 'completed');
+                if (!empty($activity->remindersenabled)) {
+                    reminder_service::queue_completion_confirmation($activity, $userid, $now);
+                }
+
+                if (!empty($activity->completionrequired)) {
+                    $cm = get_coursemodule_from_instance(
+                        'videotrackerpremium',
+                        $activity->id,
+                        $activity->course,
+                        false,
+                        MUST_EXIST
+                    );
+                    $course = get_course($activity->course);
+                    (new completion_info($course))->update_state(
+                        $cm,
+                        COMPLETION_UNKNOWN,
+                        $userid,
+                        true
+                    );
+                }
+
+                $deadline = status_service::effective_deadline($activity, $override);
+                if ($deadline > 0 && $completiontime > $deadline) {
+                    $event = activity_completed_late::create([
+                        'objectid' => $state->id,
+                        'context' => $context,
+                        'relateduserid' => $userid,
+                        'other' => [
+                            'activityid' => (int)$activity->id,
+                            'deadline' => $deadline,
+                            'completiontime' => $completiontime,
+                            'percent' => $percent,
+                        ],
+                    ]);
+                    $event->trigger();
+                }
             } finally {
                 $lock->release();
             }
