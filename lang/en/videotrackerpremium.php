@@ -95,6 +95,7 @@ $string['messagesubject_tomorrow'] = '{$a}: deadline tomorrow';
 $string['messagesubject_overdue'] = '{$a}: overdue';
 $string['messagesubject_completed'] = '{$a}: completion confirmed';
 $string['messagesubject_manual'] = '{$a}: reminder';
+$string['messageprovider:reminders'] = 'Reminders and compliance notifications';
 $string['taskprocessreminders'] = 'Process Video Tracker Premium reminders';
 $string['privacy:metadata:override'] = 'Individual deadline, waiver and administrative note overrides.';
 $string['privacy:metadata:history'] = 'Administrative change history related to a learner.';
