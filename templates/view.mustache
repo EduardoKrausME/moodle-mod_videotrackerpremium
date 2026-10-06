@@ -1,0 +1,61 @@
+<div class="videotrackerpremium">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h2 class="mb-2">{{name}}</h2>
+            {{#hasintro}}
+                <div class="videotrackerpremium-intro">{{{intro}}}</div>
+            {{/hasintro}}
+        </div>
+        {{#hasdashboard}}
+            <a class="btn btn-outline-secondary" href="{{dashboardurl}}">
+                {{#str}}dashboard, videotrackerpremium{{/str}}
+            </a>
+        {{/hasdashboard}}
+    </div>
+
+    <div class="videotrackerpremium-status card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-6 col-lg-3">
+                    <div class="text-muted small">{{#str}}currentpercent, videotrackerpremium{{/str}}</div>
+                    <div class="h4 mb-0">{{percent}}%</div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="text-muted small">{{#str}}requiredpercent, videotrackerpremium{{/str}}</div>
+                    <div class="h4 mb-0">{{requiredpercent}}%</div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="text-muted small">{{#str}}status, videotrackerpremium{{/str}}</div>
+                    <div class="fw-semibold">{{status}}</div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="text-muted small">{{#str}}deadline, videotrackerpremium{{/str}}</div>
+                    <div class="fw-semibold">{{deadline}}</div>
+                    {{#hasremaining}}<div class="small text-muted mt-1">{{remaining}}</div>{{/hasremaining}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{#notavailable}}
+        <div class="alert alert-info">{{#str}}notavailableyet, videotrackerpremium{{/str}}</div>
+    {{/notavailable}}
+
+    {{#lateblocked}}
+        <div class="alert alert-warning">{{#str}}lateviewingblocked, videotrackerpremium{{/str}}</div>
+    {{/lateblocked}}
+
+    {{#canwatch}}
+        <div class="mb-3">
+            <a class="btn btn-primary" href="#videotrackerpremium-player">
+                {{#str}}continuewatching, videotrackerpremium{{/str}}
+            </a>
+        </div>
+        <div class="alert alert-danger d-none" data-region="player-error" role="alert">
+            {{#str}}playererror, videotrackerpremium{{/str}}
+        </div>
+        <div id="videotrackerpremium-player" class="videotrackerpremium-player">
+            {{{player.sourcehtml}}}
+        </div>
+    {{/canwatch}}
+</div>

@@ -1,0 +1,19 @@
+.videotrackerpremium {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.videotrackerpremium-status {
+    border-radius: 1rem;
+}
+
+.videotrackerpremium-player {
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.videotrackerpremium-player-error::after {
+    display: block;
+    padding: 1rem;
+    content: "Video player could not be initialised.";
+}

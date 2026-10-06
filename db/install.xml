@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/videotrackerpremium/db" VERSION="20261006" COMMENT="XMLDB file for Video Tracker Premium."
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+    <TABLES>
+        <TABLE NAME="videotrackerpremium" COMMENT="Video Tracker Premium activity configuration.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="videosource" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="sourceconfig" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="videourl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="minimumpercent" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="90" SEQUENCE="false"/>
+                <FIELD NAME="availablefrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="deadline" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="graceperiod" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="allowlate" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+                <FIELD NAME="remindersenabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+                <FIELD NAME="reminderconfig" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="messageavailable" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="messagenear" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="messagetomorrow" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="messageoverdue" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="messagecompleted" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="completionrequired" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="course_fk" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="course_idx" UNIQUE="false" FIELDS="course"/>
+                <INDEX NAME="deadline_idx" UNIQUE="false" FIELDS="deadline"/>
+            </INDEXES>
+        </TABLE>
+
+        <TABLE NAME="vtrackpremium_override" COMMENT="Individual operational deadline and waiver overrides.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="deadline" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="waived" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="adminnote" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="activity_fk" TYPE="foreign" FIELDS="activityid" REFTABLE="videotrackerpremium" REFFIELDS="id"/>
+                <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="activity_user_uix" UNIQUE="true" FIELDS="activityid, userid"/>
+                <INDEX NAME="user_idx" UNIQUE="false" FIELDS="userid"/>
+            </INDEXES>
+        </TABLE>
+
+        <TABLE NAME="vtrackpremium_history" COMMENT="Audit history for individual administrative changes.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="actorid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="action" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="olddeadline" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="newdeadline" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="details" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="activity_fk" TYPE="foreign" FIELDS="activityid" REFTABLE="videotrackerpremium" REFFIELDS="id"/>
+                <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="activity_user_idx" UNIQUE="false" FIELDS="activityid, userid"/>
+                <INDEX NAME="actor_idx" UNIQUE="false" FIELDS="actorid"/>
+                <INDEX NAME="created_idx" UNIQUE="false" FIELDS="timecreated"/>
+            </INDEXES>
+        </TABLE>
+
+        <TABLE NAME="vtrackpremium_notify" COMMENT="Scheduled and sent operational notifications.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="type" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="scheduledfor" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timesent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending" SEQUENCE="false"/>
+                <FIELD NAME="attempts" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="lasterror" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="activity_fk" TYPE="foreign" FIELDS="activityid" REFTABLE="videotrackerpremium" REFFIELDS="id"/>
+                <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="notification_uix" UNIQUE="true" FIELDS="activityid, userid, type, scheduledfor"/>
+                <INDEX NAME="due_idx" UNIQUE="false" FIELDS="status, scheduledfor"/>
+                <INDEX NAME="user_idx" UNIQUE="false" FIELDS="userid"/>
+            </INDEXES>
+        </TABLE>
+
+        <TABLE NAME="vtrackpremium_state" COMMENT="Operational compliance state derived from authoritative bridge progress.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="completed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="completiontime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="completionpercent" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="laststatus" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="notstarted" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="activity_fk" TYPE="foreign" FIELDS="activityid" REFTABLE="videotrackerpremium" REFFIELDS="id"/>
+                <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="activity_user_uix" UNIQUE="true" FIELDS="activityid, userid"/>
+                <INDEX NAME="completed_idx" UNIQUE="false" FIELDS="activityid, completed"/>
+                <INDEX NAME="user_idx" UNIQUE="false" FIELDS="userid"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>

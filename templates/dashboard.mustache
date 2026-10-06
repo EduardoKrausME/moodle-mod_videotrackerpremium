@@ -1,0 +1,146 @@
+<div class="videotrackerpremium-dashboard">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h2 class="mb-0">{{#str}}dashboard, videotrackerpremium{{/str}}</h2>
+            <div class="text-muted">{{activityname}}</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            {{#canexport}}
+                <a class="btn btn-outline-secondary" href="{{reporturl}}">
+                    {{#str}}exportcsv, videotrackerpremium{{/str}}
+                </a>
+            {{/canexport}}
+            {{#canexporthistory}}
+                <a class="btn btn-outline-secondary" href="{{reporthistoryurl}}">
+                    {{#str}}exportcsvwithhistory, videotrackerpremium{{/str}}
+                </a>
+            {{/canexporthistory}}
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        {{#cards}}
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="text-muted small">{{label}}</div>
+                        <div class="h3 mb-0">{{value}}</div>
+                    </div>
+                </div>
+            </div>
+        {{/cards}}
+    </div>
+
+    <form method="get" class="card card-body mb-4">
+        <input type="hidden" name="id" value="{{cmid}}">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label" for="filter-status">{{#str}}filterstatus, videotrackerpremium{{/str}}</label>
+                <select class="form-select" id="filter-status" name="status">
+                    {{#statusoptions}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/statusoptions}}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="filter-group">{{#str}}group, core{{/str}}</label>
+                <select class="form-select" id="filter-group" name="groupid">
+                    {{#groupoptions}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/groupoptions}}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="filter-reminded">{{#str}}receivedreminder, videotrackerpremium{{/str}}</label>
+                <select class="form-select" id="filter-reminded" name="reminded">
+                    {{#remindedoptions}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/remindedoptions}}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="filter-completion">{{#str}}completion, videotrackerpremium{{/str}}</label>
+                <select class="form-select" id="filter-completion" name="completionfilter">
+                    {{#completionoptions}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/completionoptions}}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="filter-minpercent">{{#str}}minimumpercentfilter, videotrackerpremium{{/str}}</label>
+                <input class="form-control" id="filter-minpercent" type="number" min="0" max="100" name="minpercent" value="{{minpercent}}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="filter-maxpercent">{{#str}}maximumpercentfilter, videotrackerpremium{{/str}}</label>
+                <input class="form-control" id="filter-maxpercent" type="number" min="0" max="100" name="maxpercent" value="{{maxpercent}}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="filter-from">{{#str}}deadlinefrom, videotrackerpremium{{/str}}</label>
+                <input class="form-control" id="filter-from" type="date" name="deadlinefrom" value="{{deadlinefrom}}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="filter-to">{{#str}}deadlineto, videotrackerpremium{{/str}}</label>
+                <input class="form-control" id="filter-to" type="date" name="deadlineto" value="{{deadlineto}}">
+            </div>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-secondary" type="submit">{{#str}}filter, core{{/str}}</button>
+        </div>
+    </form>
+
+    <form method="post" action="bulk.php">
+        <input type="hidden" name="id" value="{{cmid}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th><span class="visually-hidden">{{#str}}select{{/str}}</span></th>
+                    <th>{{#str}}student, videotrackerpremium{{/str}}</th>
+                    <th>{{#str}}percent, videotrackerpremium{{/str}}</th>
+                    <th>{{#str}}status, videotrackerpremium{{/str}}</th>
+                    <th>{{#str}}deadline, videotrackerpremium{{/str}}</th>
+                    <th>{{#str}}lastaccess, videotrackerpremium{{/str}}</th>
+                    <th>{{#str}}lastsession, videotrackerpremium{{/str}}</th>
+                    <th>{{#str}}lastreminder, videotrackerpremium{{/str}}</th>
+                    <th>{{#str}}completion, videotrackerpremium{{/str}}</th>
+                    {{#canoverrides}}<th>{{#str}}override, videotrackerpremium{{/str}}</th>{{/canoverrides}}
+                </tr>
+                </thead>
+                <tbody>
+                {{#rows}}
+                    <tr>
+                        <td><input type="checkbox" name="userids[]" value="{{userid}}" aria-label="{{fullname}}"></td>
+                        <td><strong>{{fullname}}</strong><div class="small text-muted">{{email}}</div></td>
+                        <td>{{percent}}%</td>
+                        <td>{{status}}</td>
+                        <td>{{deadline}}</td>
+                        <td>{{lastaccess}}</td>
+                        <td>{{lastsession}}</td>
+                        <td>{{lastreminder}}</td>
+                        <td>{{completion}}</td>
+                        {{#canoverrides}}<td><a href="{{overrideurl}}">{{#str}}override, videotrackerpremium{{/str}}</a></td>{{/canoverrides}}
+                    </tr>
+                {{/rows}}
+                {{^hasrows}}
+                    <tr><td colspan="10" class="text-center text-muted py-4">{{#str}}norows, videotrackerpremium{{/str}}</td></tr>
+                {{/hasrows}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 align-items-end mt-3">
+            <div>
+                <label class="form-label" for="bulk-action">{{#str}}bulkaction, videotrackerpremium{{/str}}</label>
+                <select class="form-select" id="bulk-action" name="action" required>
+                    <option value="">{{#str}}choose{{/str}}</option>
+                    {{#cansend}}<option value="remind">{{#str}}sendremindernow, videotrackerpremium{{/str}}</option>{{/cansend}}
+                    {{#canoverrides}}
+                        <option value="extend">{{#str}}extenddeadline, videotrackerpremium{{/str}}</option>
+                        <option value="waive">{{#str}}waive, videotrackerpremium{{/str}}</option>
+                        <option value="unwaive">{{#str}}removewaiver, videotrackerpremium{{/str}}</option>
+                    {{/canoverrides}}
+                </select>
+            </div>
+            {{#canoverrides}}
+                <div>
+                    <label class="form-label" for="bulk-days">{{#str}}days, videotrackerpremium{{/str}}</label>
+                    <input class="form-control" id="bulk-days" type="number" min="1" max="3650" name="value" value="7">
+                </div>
+            {{/canoverrides}}
+            <button class="btn btn-primary" type="submit">{{#str}}applyselected, videotrackerpremium{{/str}}</button>
+        </div>
+    </form>
+</div>
