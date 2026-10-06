@@ -42,7 +42,7 @@ if ($canhistory && $userids) {
         'historyuser'
     );
     $history = $DB->get_records_select(
-        'vtrackpremium_history',
+        'videotrackerpremium_history',
         "activityid = :activityid AND userid {$insql}",
         ['activityid' => $activity->id] + $params,
         'timecreated ASC'
