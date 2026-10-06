@@ -78,7 +78,7 @@ class progress_service {
         $percent = $progress ? (int)$progress->percent : 0;
         $now = time();
 
-        $state = $DB->get_record('vtrackpremium_state', [
+        $state = $DB->get_record('videotrackerpremium_state', [
             'activityid' => $activity->id,
             'userid' => $userid,
         ]);
@@ -93,17 +93,17 @@ class progress_service {
                 'lastaccess' => 0,
                 'timemodified' => $now,
             ];
-            $state->id = $DB->insert_record('vtrackpremium_state', $state);
+            $state->id = $DB->insert_record('videotrackerpremium_state', $state);
         }
 
-        $override = $DB->get_record('vtrackpremium_override', [
+        $override = $DB->get_record('videotrackerpremium_override', [
             'activityid' => $activity->id,
             'userid' => $userid,
         ]);
         if ($override && !empty($override->waived)) {
             $state->laststatus = 'waived';
             $state->timemodified = $now;
-            $DB->update_record('vtrackpremium_state', $state);
+            $DB->update_record('videotrackerpremium_state', $state);
             reminder_service::cancel_user_pending((int)$activity->id, $userid, 'waived');
             return $state;
         }
@@ -119,7 +119,7 @@ class progress_service {
             }
 
             try {
-                $lateststate = $DB->get_record('vtrackpremium_state', [
+                $lateststate = $DB->get_record('videotrackerpremium_state', [
                     'activityid' => $activity->id,
                     'userid' => $userid,
                 ]);
@@ -138,8 +138,8 @@ class progress_service {
                 $state->completionpercent = $percent;
                 $state->laststatus = 'completed';
                 $state->timemodified = $now;
-                $DB->update_record('vtrackpremium_state', $state);
-                $DB->insert_record('vtrackpremium_history', (object)[
+                $DB->update_record('videotrackerpremium_state', $state);
+                $DB->insert_record('videotrackerpremium_history', (object)[
                     'activityid' => (int)$activity->id,
                     'userid' => $userid,
                     'actorid' => 0,
@@ -193,7 +193,7 @@ class progress_service {
         } else {
             $state->completionpercent = max((int)$state->completionpercent, $percent);
             $state->timemodified = $now;
-            $DB->update_record('vtrackpremium_state', $state);
+            $DB->update_record('videotrackerpremium_state', $state);
         }
 
         return $state;
