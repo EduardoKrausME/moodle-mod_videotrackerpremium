@@ -215,6 +215,14 @@ class reminder_service {
             return;
         }
         $activity = $DB->get_record('videotrackerpremium', ['id' => $notification->activityid], '*', MUST_EXIST);
+        if ($notification->type !== 'manual' && empty($activity->remindersenabled)) {
+            $notification->status = 'cancelled';
+            $notification->lasterror = 'remindersdisabled';
+            $notification->timemodified = time();
+            $DB->update_record('vtrackpremium_notify', $notification);
+            return;
+        }
+
         $cm = get_coursemodule_from_instance(
             'videotrackerpremium', $activity->id, $activity->course, false, MUST_EXIST
         );
