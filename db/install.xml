@@ -34,12 +34,11 @@
                 <KEY NAME="course_fk" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
             </KEYS>
             <INDEXES>
-                <INDEX NAME="course_idx" UNIQUE="false" FIELDS="course"/>
                 <INDEX NAME="deadline_idx" UNIQUE="false" FIELDS="deadline"/>
             </INDEXES>
         </TABLE>
 
-        <TABLE NAME="vtrackpremium_override" COMMENT="Individual operational deadline and waiver overrides.">
+        <TABLE NAME="videotrackerpremium_override" COMMENT="Individual operational deadline and waiver overrides.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -57,11 +56,10 @@
             </KEYS>
             <INDEXES>
                 <INDEX NAME="activity_user_uix" UNIQUE="true" FIELDS="activityid, userid"/>
-                <INDEX NAME="user_idx" UNIQUE="false" FIELDS="userid"/>
             </INDEXES>
         </TABLE>
 
-        <TABLE NAME="vtrackpremium_history" COMMENT="Audit history for individual administrative changes.">
+        <TABLE NAME="videotrackerpremium_history" COMMENT="Audit history for individual administrative changes.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -85,7 +83,7 @@
             </INDEXES>
         </TABLE>
 
-        <TABLE NAME="vtrackpremium_notify" COMMENT="Scheduled and sent operational notifications.">
+        <TABLE NAME="videotrackerpremium_notify" COMMENT="Scheduled and sent operational notifications.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -107,11 +105,10 @@
             <INDEXES>
                 <INDEX NAME="notification_uix" UNIQUE="true" FIELDS="activityid, userid, type, scheduledfor"/>
                 <INDEX NAME="due_idx" UNIQUE="false" FIELDS="status, scheduledfor"/>
-                <INDEX NAME="user_idx" UNIQUE="false" FIELDS="userid"/>
             </INDEXES>
         </TABLE>
 
-        <TABLE NAME="vtrackpremium_state" COMMENT="Operational compliance state derived from authoritative bridge progress.">
+        <TABLE NAME="videotrackerpremium_state" COMMENT="Operational compliance state derived from authoritative bridge progress.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -131,7 +128,6 @@
             <INDEXES>
                 <INDEX NAME="activity_user_uix" UNIQUE="true" FIELDS="activityid, userid"/>
                 <INDEX NAME="completed_idx" UNIQUE="false" FIELDS="activityid, completed"/>
-                <INDEX NAME="user_idx" UNIQUE="false" FIELDS="userid"/>
             </INDEXES>
         </TABLE>
     </TABLES>
