@@ -15,19 +15,19 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
 
         if ($this->get_setting_value('userinfo')) {
             $paths[] = new restore_path_element(
-                'vtrackpremium_override',
+                'videotrackerpremium_override',
                 '/activity/videotrackerpremium/overrides/override'
             );
             $paths[] = new restore_path_element(
-                'vtrackpremium_history',
+                'videotrackerpremium_history',
                 '/activity/videotrackerpremium/historyitems/history'
             );
             $paths[] = new restore_path_element(
-                'vtrackpremium_notify',
+                'videotrackerpremium_notify',
                 '/activity/videotrackerpremium/notifications/notification'
             );
             $paths[] = new restore_path_element(
-                'vtrackpremium_state',
+                'videotrackerpremium_state',
                 '/activity/videotrackerpremium/states/state'
             );
         }
@@ -54,7 +54,7 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         $this->set_mapping('videotrackerpremium', $oldid, $newid, true);
     }
 
-    protected function process_vtrackpremium_override($data): void {
+    protected function process_videotrackerpremium_override($data): void {
         global $DB;
 
         $data = (object)$data;
@@ -66,10 +66,10 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         if (!empty($data->deadline)) {
             $data->deadline = $this->apply_date_offset($data->deadline);
         }
-        $DB->insert_record('vtrackpremium_override', $data);
+        $DB->insert_record('videotrackerpremium_override', $data);
     }
 
-    protected function process_vtrackpremium_history($data): void {
+    protected function process_videotrackerpremium_history($data): void {
         global $DB;
 
         $data = (object)$data;
@@ -87,10 +87,10 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         if (!empty($data->newdeadline)) {
             $data->newdeadline = $this->apply_date_offset($data->newdeadline);
         }
-        $DB->insert_record('vtrackpremium_history', $data);
+        $DB->insert_record('videotrackerpremium_history', $data);
     }
 
-    protected function process_vtrackpremium_notify($data): void {
+    protected function process_videotrackerpremium_notify($data): void {
         global $DB;
 
         $data = (object)$data;
@@ -104,10 +104,10 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
                 $data->{$field} = $this->apply_date_offset($data->{$field});
             }
         }
-        $DB->insert_record('vtrackpremium_notify', $data);
+        $DB->insert_record('videotrackerpremium_notify', $data);
     }
 
-    protected function process_vtrackpremium_state($data): void {
+    protected function process_videotrackerpremium_state($data): void {
         global $DB;
 
         $data = (object)$data;
@@ -121,7 +121,7 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
                 $data->{$field} = $this->apply_date_offset($data->{$field});
             }
         }
-        $DB->insert_record('vtrackpremium_state', $data);
+        $DB->insert_record('videotrackerpremium_state', $data);
     }
 
     protected function after_execute(): void {
