@@ -28,7 +28,7 @@ final class message_template_test extends \advanced_testcase {
     }
 
     public function test_render_does_not_evaluate_content(): void {
-        $template = '{firstname} <?php echo 7 * 7; ?> \${7*7}';
+        $template = '{firstname} <?php echo 7 * 7; ?> ${7*7}';
         $this->assertSame(
             'Grace <?php echo 7 * 7; ?> ${7*7}',
             message_template::render($template, ['firstname' => 'Grace'])
