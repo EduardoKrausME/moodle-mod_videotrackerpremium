@@ -113,6 +113,7 @@ class status_service {
             'deadline' => $deadline,
             'extended' => (bool)$extended,
             'waived' => (bool)($override->waived ?? false),
+            'lastaccess' => $state ? (int)($state->lastaccess ?? 0) : 0,
             'lastsession' => $progress ? (int)($progress->lastsession ?? 0) : 0,
             'lastreminder' => $lastreminder,
             'completiontime' => $completiontime,
