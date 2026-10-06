@@ -116,7 +116,7 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         if (!$data->userid) {
             return;
         }
-        foreach (['completiontime', 'timemodified'] as $field) {
+        foreach (['completiontime', 'lastaccess', 'timemodified'] as $field) {
             if (!empty($data->{$field})) {
                 $data->{$field} = $this->apply_date_offset($data->{$field});
             }
