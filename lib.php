@@ -147,7 +147,7 @@ function videotrackerpremium_update_instance(stdClass $data, ?mod_videotrackerpr
                 (int)$data->minimumpercent,
                 'mod_videotrackerpremium'
             );
-            $DB->delete_records('vtrackpremium_state', ['activityid' => (int)$data->id]);
+            $DB->delete_records('videotrackerpremium_state', ['activityid' => (int)$data->id]);
 
             $cm = get_coursemodule_from_id(
                 'videotrackerpremium',
@@ -195,7 +195,7 @@ function videotrackerpremium_delete_instance(int $id): bool {
     }
 
     $transaction = $DB->start_delegated_transaction();
-    foreach (['vtrackpremium_notify', 'vtrackpremium_history', 'vtrackpremium_override', 'vtrackpremium_state'] as $table) {
+    foreach (['videotrackerpremium_notify', 'videotrackerpremium_history', 'videotrackerpremium_override', 'videotrackerpremium_state'] as $table) {
         $DB->delete_records($table, ['activityid' => $id]);
     }
     $DB->delete_records('videotrackerpremium', ['id' => $id]);
