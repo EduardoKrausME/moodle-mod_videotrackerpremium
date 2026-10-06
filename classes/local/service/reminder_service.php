@@ -106,9 +106,11 @@ class reminder_service {
 
         $config = self::config($activity);
         $now = time();
-        if (!empty($config['sendavailable']) && !empty($activity->availablefrom) &&
-                (int)$activity->availablefrom >= ($now - 600)) {
-            self::queue((int)$activity->id, $userid, 'available', (int)$activity->availablefrom);
+        $availableat = !empty($activity->availablefrom)
+            ? (int)$activity->availablefrom
+            : (int)$activity->timecreated;
+        if (!empty($config['sendavailable']) && $availableat >= ($now - 600)) {
+            self::queue((int)$activity->id, $userid, 'available', $availableat);
         }
 
         $deadline = status_service::effective_deadline($activity, $override);
