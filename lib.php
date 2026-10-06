@@ -216,7 +216,13 @@ function videotrackerpremium_delete_instance(int $id): bool {
     }
 
     $transaction = $DB->start_delegated_transaction();
-    foreach (['videotrackerpremium_notify', 'videotrackerpremium_history', 'videotrackerpremium_override', 'videotrackerpremium_state'] as $table) {
+    $tables = [
+        'videotrackerpremium_notify',
+        'videotrackerpremium_history',
+        'videotrackerpremium_override',
+        'videotrackerpremium_state',
+    ];
+    foreach ($tables as $table) {
         $DB->delete_records($table, ['activityid' => $id]);
     }
     $DB->delete_records('videotrackerpremium', ['id' => $id]);
