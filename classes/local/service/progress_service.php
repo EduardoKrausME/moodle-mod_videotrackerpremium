@@ -90,6 +90,7 @@ class progress_service {
                 'completiontime' => 0,
                 'completionpercent' => 0,
                 'laststatus' => 'notstarted',
+                'lastaccess' => 0,
                 'timemodified' => $now,
             ];
             $state->id = $DB->insert_record('vtrackpremium_state', $state);
