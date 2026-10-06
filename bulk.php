@@ -24,11 +24,10 @@ require_sesskey();
 if (!in_array($action, ['remind', 'extend', 'waive', 'unwaive'], true)) {
     throw new invalid_parameter_exception('Invalid bulk action.');
 }
-if ($action === 'remind') {
-    require_capability('mod/videotrackerpremium:sendreminders', $context);
-} else {
-    require_capability('mod/videotrackerpremium:manageoverrides', $context);
-}
+$requiredcapability = $action === 'remind'
+    ? 'mod/videotrackerpremium:sendreminders'
+    : 'mod/videotrackerpremium:manageoverrides';
+require_capability($requiredcapability, $context);
 
 $userids = array_values(array_unique(array_filter(array_map('intval', $userids))));
 $authorised = recipient_guard::filter_authorised($context, $userids, (int)$USER->id);
@@ -37,7 +36,7 @@ sort($authorised);
 if (!$userids || $userids !== $authorised) {
     throw new required_capability_exception(
         $context,
-        'mod/videotrackerpremium:manageoverrides',
+        $requiredcapability,
         'nopermissions',
         ''
     );
