@@ -27,7 +27,7 @@ class provider implements
     core_userlist_provider {
 
     public static function get_metadata(collection $collection): collection {
-        $collection->add_database_table('vtrackpremium_override', [
+        $collection->add_database_table('videotrackerpremium_override', [
             'userid' => 'privacy:metadata:override',
             'deadline' => 'privacy:metadata:override',
             'waived' => 'privacy:metadata:override',
@@ -36,7 +36,7 @@ class provider implements
             'timemodified' => 'privacy:metadata:override',
         ], 'privacy:metadata:override');
 
-        $collection->add_database_table('vtrackpremium_history', [
+        $collection->add_database_table('videotrackerpremium_history', [
             'userid' => 'privacy:metadata:history',
             'actorid' => 'privacy:metadata:history',
             'action' => 'privacy:metadata:history',
@@ -46,7 +46,7 @@ class provider implements
             'timecreated' => 'privacy:metadata:history',
         ], 'privacy:metadata:history');
 
-        $collection->add_database_table('vtrackpremium_notify', [
+        $collection->add_database_table('videotrackerpremium_notify', [
             'userid' => 'privacy:metadata:notify',
             'type' => 'privacy:metadata:notify',
             'scheduledfor' => 'privacy:metadata:notify',
@@ -54,7 +54,7 @@ class provider implements
             'status' => 'privacy:metadata:notify',
         ], 'privacy:metadata:notify');
 
-        $collection->add_database_table('vtrackpremium_state', [
+        $collection->add_database_table('videotrackerpremium_state', [
             'userid' => 'privacy:metadata:state',
             'completed' => 'privacy:metadata:state',
             'completiontime' => 'privacy:metadata:state',
@@ -81,25 +81,25 @@ class provider implements
                    AND (
                        EXISTS (
                            SELECT 1
-                             FROM {vtrackpremium_override} o
+                             FROM {videotrackerpremium_override} o
                             WHERE o.activityid = v.id
                               AND o.userid = :overrideuserid
                        )
                        OR EXISTS (
                            SELECT 1
-                             FROM {vtrackpremium_history} h
+                             FROM {videotrackerpremium_history} h
                             WHERE h.activityid = v.id
                               AND (h.userid = :historyuserid OR h.actorid = :actoruserid)
                        )
                        OR EXISTS (
                            SELECT 1
-                             FROM {vtrackpremium_notify} n
+                             FROM {videotrackerpremium_notify} n
                             WHERE n.activityid = v.id
                               AND n.userid = :notifyuserid
                        )
                        OR EXISTS (
                            SELECT 1
-                             FROM {vtrackpremium_state} s
+                             FROM {videotrackerpremium_state} s
                             WHERE s.activityid = v.id
                               AND s.userid = :stateuserid
                        )
@@ -126,17 +126,17 @@ class provider implements
             return;
         }
 
-        $sql = "SELECT userid FROM {vtrackpremium_override} WHERE activityid = :a1
+        $sql = "SELECT userid FROM {videotrackerpremium_override} WHERE activityid = :a1
                 UNION
-                SELECT userid FROM {vtrackpremium_history} WHERE activityid = :a2
+                SELECT userid FROM {videotrackerpremium_history} WHERE activityid = :a2
                 UNION
                 SELECT actorid AS userid
-                  FROM {vtrackpremium_history}
+                  FROM {videotrackerpremium_history}
                  WHERE activityid = :a3 AND actorid > 0
                 UNION
-                SELECT userid FROM {vtrackpremium_notify} WHERE activityid = :a4
+                SELECT userid FROM {videotrackerpremium_notify} WHERE activityid = :a4
                 UNION
-                SELECT userid FROM {vtrackpremium_state} WHERE activityid = :a5";
+                SELECT userid FROM {videotrackerpremium_state} WHERE activityid = :a5";
         $userlist->add_from_sql('userid', $sql, [
             'a1' => $activityid,
             'a2' => $activityid,
@@ -163,7 +163,7 @@ class provider implements
                 continue;
             }
 
-            $override = $DB->get_record('vtrackpremium_override', [
+            $override = $DB->get_record('videotrackerpremium_override', [
                 'activityid' => $activityid,
                 'userid' => $userid,
             ]);
@@ -183,7 +183,7 @@ class provider implements
             }
 
             $notifications = [];
-            foreach ($DB->get_records('vtrackpremium_notify', [
+            foreach ($DB->get_records('videotrackerpremium_notify', [
                 'activityid' => $activityid,
                 'userid' => $userid,
             ], 'timecreated ASC') as $record) {
@@ -201,7 +201,7 @@ class provider implements
                 );
             }
 
-            $state = $DB->get_record('vtrackpremium_state', [
+            $state = $DB->get_record('videotrackerpremium_state', [
                 'activityid' => $activityid,
                 'userid' => $userid,
             ]);
@@ -225,7 +225,7 @@ class provider implements
 
             $history = [];
             $records = $DB->get_records_select(
-                'vtrackpremium_history',
+                'videotrackerpremium_history',
                 'activityid = :activityid AND (userid = :userid OR actorid = :actorid)',
                 [
                     'activityid' => $activityid,
@@ -268,10 +268,10 @@ class provider implements
             return;
         }
         foreach ([
-            'vtrackpremium_override',
-            'vtrackpremium_history',
-            'vtrackpremium_notify',
-            'vtrackpremium_state',
+            'videotrackerpremium_override',
+            'videotrackerpremium_history',
+            'videotrackerpremium_notify',
+            'videotrackerpremium_state',
         ] as $table) {
             $DB->delete_records($table, ['activityid' => $activityid]);
         }
@@ -329,9 +329,9 @@ class provider implements
         $params = $activityparams + $userparams;
 
         foreach ([
-            'vtrackpremium_override',
-            'vtrackpremium_notify',
-            'vtrackpremium_state',
+            'videotrackerpremium_override',
+            'videotrackerpremium_notify',
+            'videotrackerpremium_state',
         ] as $table) {
             $DB->delete_records_select(
                 $table,
@@ -342,7 +342,7 @@ class provider implements
 
         // Rows about the user are personal data and can be removed.
         $DB->delete_records_select(
-            'vtrackpremium_history',
+            'videotrackerpremium_history',
             "activityid {$activitysql} AND userid {$usersql}",
             $params
         );
@@ -350,7 +350,7 @@ class provider implements
         // Rows about somebody else remain an administrative audit record,
         // but the deleted administrator must no longer be identifiable.
         $DB->set_field_select(
-            'vtrackpremium_history',
+            'videotrackerpremium_history',
             'actorid',
             0,
             "activityid {$activitysql} AND actorid {$usersql}",
