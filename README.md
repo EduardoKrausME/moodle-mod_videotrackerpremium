@@ -12,7 +12,7 @@ Playback providers, the player, authoritative watched percentage, viewing maps a
 
 - availability date, deadline, grace period and optional late viewing;
 - configurable minimum authoritative watched percentage;
-- reminders 7, 3 and 1 day before, on the deadline, after the deadline and recurring while overdue;
+- reminders 7, 3 and 1 day before, on the deadline, after the deadline and recurring every configurable X days while overdue;
 - Moodle Message API delivery, respecting Moodle messaging infrastructure and preferences;
 - safe message templates with `{firstname}`, `{activityname}`, `{deadline}`, `{percent}` and `{course}`;
 - operational statuses for not available, not started, in progress, completed, due soon, due today, overdue, waived and extended deadlines;
@@ -36,7 +36,7 @@ https://github.com/EduardoKrausME/moodle-local_video_bridge
 
 A selected source must advertise reliable tracking support because compliance decisions use server-side persisted progress rather than a percentage supplied by the browser.
 
-Video Tracker Premium works with the current persisted progress API and periodically synchronises operational state through cron. An optional Video Bridge evolution adds registered thresholds plus public `progress_updated`, `progress_threshold_reached` and `video_completed` events so completion can react immediately without aggressive polling.
+Video Tracker Premium registers its completion threshold in `local_video_bridge` and consumes the public `progress_updated`, `progress_threshold_reached` and `video_completed` events. Dashboard and cron reads use the bridge batch progress/session APIs, while cron remains a reconciliation path for reminders and missed state rather than the primary completion trigger.
 
 ## Reminder processing
 
