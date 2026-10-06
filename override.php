@@ -21,7 +21,7 @@ require_capability('mod/videotrackerpremium:manageoverrides', $context);
 recipient_guard::require_authorised($context, $userid, (int)$USER->id);
 
 $target = $DB->get_record('user', ['id' => $userid, 'deleted' => 0], '*', MUST_EXIST);
-$current = $DB->get_record('vtrackpremium_override', [
+$current = $DB->get_record('videotrackerpremium_override', [
     'activityid' => $activity->id,
     'userid' => $userid,
 ]);
@@ -106,7 +106,7 @@ $form->display();
 
 if (has_capability('mod/videotrackerpremium:viewadminhistory', $context)) {
     $history = $DB->get_records(
-        'vtrackpremium_history',
+        'videotrackerpremium_history',
         ['activityid' => $activity->id, 'userid' => $userid],
         'timecreated DESC'
     );
