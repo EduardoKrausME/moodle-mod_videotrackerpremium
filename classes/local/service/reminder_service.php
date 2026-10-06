@@ -171,6 +171,23 @@ class reminder_service {
     }
 
     public static function send(int $notificationid): void {
+        $factory = \core\lock\lock_config::get_lock_factory('mod_videotrackerpremium');
+        $lock = $factory->get_lock('notification_' . $notificationid, 0);
+        if (!$lock) {
+            return;
+        }
+
+        try {
+            self::send_unlocked($notificationid);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * Sends one notification while the per-notification lock is held.
+     */
+    private static function send_unlocked(int $notificationid): void {
         global $DB;
 
         $notification = $DB->get_record('vtrackpremium_notify', ['id' => $notificationid]);
