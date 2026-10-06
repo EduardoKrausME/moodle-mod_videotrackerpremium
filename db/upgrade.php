@@ -33,5 +33,25 @@ function xmldb_videotrackerpremium_upgrade(int $oldversion): bool {
         upgrade_mod_savepoint(true, 2026100603, 'videotrackerpremium');
     }
 
+    if ($oldversion < 2026100604) {
+        $dbman = $DB->get_manager();
+        $renames = [
+            'vtrackpremium_override' => 'videotrackerpremium_override',
+            'vtrackpremium_history' => 'videotrackerpremium_history',
+            'vtrackpremium_notify' => 'videotrackerpremium_notify',
+            'vtrackpremium_state' => 'videotrackerpremium_state',
+        ];
+
+        foreach ($renames as $oldname => $newname) {
+            $oldtable = new xmldb_table($oldname);
+            $newtable = new xmldb_table($newname);
+            if ($dbman->table_exists($oldtable) && !$dbman->table_exists($newtable)) {
+                $dbman->rename_table($oldtable, $newname);
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2026100604, 'videotrackerpremium');
+    }
+
     return true;
 }
