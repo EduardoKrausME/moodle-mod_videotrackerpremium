@@ -31,7 +31,7 @@ $progresses = progress_service::get_progress_batch($activity, $context, [(int)$U
 $progress = $progresses[$USER->id] ?? null;
 progress_service::sync_completion($activity, $context, (int)$USER->id, $progress);
 $now = time();
-$DB->set_field('vtrackpremium_state', 'lastaccess', $now, [
+$DB->set_field('videotrackerpremium_state', 'lastaccess', $now, [
     'activityid' => (int)$activity->id,
     'userid' => (int)$USER->id,
 ]);
