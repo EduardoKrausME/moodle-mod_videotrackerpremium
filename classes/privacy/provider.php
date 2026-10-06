@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * provider.php
+ *
+ * @package   mod_videotrackerpremium
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_videotrackerpremium\privacy;
 
 use context;
@@ -26,6 +49,12 @@ class provider implements
     plugin_provider,
     core_userlist_provider {
 
+    /**
+     * Method get_metadata.
+     *
+     * @param collection $collection Parameter collection.
+     * @return collection Return value.
+     */
     public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('videotrackerpremium_override', [
             'userid' => 'privacy:metadata:override',
@@ -66,6 +95,12 @@ class provider implements
         return $collection;
     }
 
+    /**
+     * Method get_contexts_for_userid.
+     *
+     * @param int $userid Parameter userid.
+     * @return contextlist Return value.
+     */
     public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
         $sql = "SELECT DISTINCT ctx.id
@@ -116,6 +151,12 @@ class provider implements
         return $contextlist;
     }
 
+    /**
+     * Method get_users_in_context.
+     *
+     * @param userlist $userlist Parameter userlist.
+     * @return mixed Return value.
+     */
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
         if (!$context instanceof context_module) {
@@ -146,6 +187,12 @@ class provider implements
         ]);
     }
 
+    /**
+     * Method export_user_data.
+     *
+     * @param approved_contextlist $contextlist Parameter contextlist.
+     * @return mixed Return value.
+     */
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
 
@@ -257,6 +304,12 @@ class provider implements
         }
     }
 
+    /**
+     * Method delete_data_for_all_users_in_context.
+     *
+     * @param context $context Parameter context.
+     * @return mixed Return value.
+     */
     public static function delete_data_for_all_users_in_context(context $context) {
         global $DB;
 
@@ -277,6 +330,12 @@ class provider implements
         }
     }
 
+    /**
+     * Method delete_data_for_user.
+     *
+     * @param approved_contextlist $contextlist Parameter contextlist.
+     * @return mixed Return value.
+     */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
 
@@ -295,6 +354,12 @@ class provider implements
         self::delete_for_users($activityids, [(int)$contextlist->get_user()->id]);
     }
 
+    /**
+     * Method delete_data_for_users.
+     *
+     * @param approved_userlist $userlist Parameter userlist.
+     * @return mixed Return value.
+     */
     public static function delete_data_for_users(approved_userlist $userlist) {
         $context = $userlist->get_context();
         if (!$context instanceof context_module) {
@@ -307,6 +372,13 @@ class provider implements
         self::delete_for_users([$activityid], array_map('intval', $userlist->get_userids()));
     }
 
+    /**
+     * Method delete_for_users.
+     *
+     * @param array $activityids Parameter activityids.
+     * @param array $userids Parameter userids.
+     * @return void Return value.
+     */
     private static function delete_for_users(array $activityids, array $userids): void {
         global $DB;
 
@@ -358,6 +430,12 @@ class provider implements
         );
     }
 
+    /**
+     * Method activity_id.
+     *
+     * @param context_module $context Parameter context.
+     * @return int Return value.
+     */
     private static function activity_id(context_module $context): int {
         $cm = get_coursemodule_from_id(
             'videotrackerpremium',

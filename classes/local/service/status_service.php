@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * status_service.php
+ *
+ * @package   mod_videotrackerpremium
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_videotrackerpremium\local\service;
 
 use context_module;
@@ -8,6 +31,13 @@ use stdClass;
  * Operational status and compliance classification.
  */
 class status_service {
+    /**
+     * Method effective_deadline.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @param ?stdClass $override Parameter override.
+     * @return int Return value.
+     */
     public static function effective_deadline(stdClass $activity, ?stdClass $override): int {
         if ($override && !empty($override->deadline)) {
             return (int)$override->deadline;
@@ -15,6 +45,19 @@ class status_service {
         return (int)$activity->deadline;
     }
 
+    /**
+     * Method classify.
+     *
+     * @param int $percent Parameter percent.
+     * @param int $required Parameter required.
+     * @param int $now Parameter now.
+     * @param int $availablefrom Parameter availablefrom.
+     * @param int $deadline Parameter deadline.
+     * @param bool $waived Parameter waived.
+     * @param bool $extended Parameter extended.
+     * @param bool $completed Parameter completed.
+     * @return string Return value.
+     */
     public static function classify(
         int $percent,
         int $required,
@@ -51,6 +94,15 @@ class status_service {
         return $percent > 0 ? 'inprogress' : 'notstarted';
     }
 
+    /**
+     * Method get_user_status.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @param context_module $context Parameter context.
+     * @param int $userid Parameter userid.
+     * @param ?stdClass $progress Parameter progress.
+     * @return array Return value.
+     */
     public static function get_user_status(
         stdClass $activity,
         context_module $context,

@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * reminder_service.php
+ *
+ * @package   mod_videotrackerpremium
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_videotrackerpremium\local\service;
 
 use context_module;
@@ -11,11 +34,26 @@ use stdClass;
  * Notification scheduling and delivery.
  */
 class reminder_service {
+    /**
+     * Method config.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @return array Return value.
+     */
     public static function config(stdClass $activity): array {
         $config = json_decode((string)$activity->reminderconfig, true);
         return is_array($config) ? $config : ['sendavailable' => false, 'offsets' => [], 'repeatlateevery' => 0];
     }
 
+    /**
+     * Method queue.
+     *
+     * @param int $activityid Parameter activityid.
+     * @param int $userid Parameter userid.
+     * @param string $type Parameter type.
+     * @param int $scheduledfor Parameter scheduledfor.
+     * @return ?int Return value.
+     */
     private static function queue(int $activityid, int $userid, string $type, int $scheduledfor): ?int {
         global $DB;
 
@@ -47,6 +85,14 @@ class reminder_service {
         ]));
     }
 
+    /**
+     * Method cancel_user_pending.
+     *
+     * @param int $activityid Parameter activityid.
+     * @param int $userid Parameter userid.
+     * @param string $reason Parameter reason.
+     * @return void Return value.
+     */
     public static function cancel_user_pending(int $activityid, int $userid, string $reason): void {
         global $DB;
 
@@ -71,6 +117,14 @@ class reminder_service {
         }
     }
 
+    /**
+     * Method cancel_activity_pending.
+     *
+     * @param int $activityid Parameter activityid.
+     * @param string $reason Parameter reason.
+     * @param bool $includecompleted Parameter includecompleted.
+     * @return void Return value.
+     */
     public static function cancel_activity_pending(
         int $activityid,
         string $reason,
@@ -94,6 +148,14 @@ class reminder_service {
         }
     }
 
+    /**
+     * Method synchronise_user.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @param context_module $context Parameter context.
+     * @param int $userid Parameter userid.
+     * @return void Return value.
+     */
     public static function synchronise_user(stdClass $activity, context_module $context, int $userid): void {
         global $DB;
 
@@ -141,14 +203,35 @@ class reminder_service {
         }
     }
 
+    /**
+     * Method queue_completion_confirmation.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @param int $userid Parameter userid.
+     * @param ?int $when Parameter when.
+     * @return void Return value.
+     */
     public static function queue_completion_confirmation(stdClass $activity, int $userid, ?int $when = null): void {
         self::queue((int)$activity->id, $userid, 'completed', $when ?? time());
     }
 
+    /**
+     * Method queue_manual.
+     *
+     * @param int $activityid Parameter activityid.
+     * @param int $userid Parameter userid.
+     * @return int Return value.
+     */
     public static function queue_manual(int $activityid, int $userid): int {
         return (int)self::queue($activityid, $userid, 'manual', time());
     }
 
+    /**
+     * Method claim_due.
+     *
+     * @param int $limit Parameter limit.
+     * @return array Return value.
+     */
     public static function claim_due(int $limit = 200): array {
         global $DB;
 
@@ -196,6 +279,12 @@ class reminder_service {
         return $ids;
     }
 
+    /**
+     * Method send.
+     *
+     * @param int $notificationid Parameter notificationid.
+     * @return void Return value.
+     */
     public static function send(int $notificationid): void {
         $factory = \core\lock\lock_config::get_lock_factory('mod_videotrackerpremium');
         $lock = $factory->get_lock('notification_' . $notificationid, 0);

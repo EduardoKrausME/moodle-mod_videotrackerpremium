@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * recipient_guard.php
+ *
+ * @package   mod_videotrackerpremium
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_videotrackerpremium\local\service;
 
 use context_module;
@@ -46,6 +69,14 @@ class recipient_guard {
         );
     }
 
+    /**
+     * Method filter_authorised.
+     *
+     * @param context_module $context Parameter context.
+     * @param array $requested Parameter requested.
+     * @param ?int $actorid Parameter actorid.
+     * @return array Return value.
+     */
     public static function filter_authorised(context_module $context, array $requested, ?int $actorid = null): array {
         global $USER;
 
@@ -74,6 +105,14 @@ class recipient_guard {
         return array_values(array_filter($requested, static fn(int $id): bool => isset($allowed[$id])));
     }
 
+    /**
+     * Method require_authorised.
+     *
+     * @param context_module $context Parameter context.
+     * @param int $userid Parameter userid.
+     * @param ?int $actorid Parameter actorid.
+     * @return void Return value.
+     */
     public static function require_authorised(context_module $context, int $userid, ?int $actorid = null): void {
         if (self::filter_authorised($context, [$userid], $actorid) !== [$userid]) {
             throw new \required_capability_exception(

@@ -1,10 +1,38 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * restore_videotrackerpremium_stepslib.php
+ *
+ * @package   mod_videotrackerpremium
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
  * Restores activity configuration and optional user operational data.
  */
 class restore_videotrackerpremium_activity_structure_step extends restore_activity_structure_step {
+    /**
+     * Method define_structure.
+     *
+     * @return array Return value.
+     */
     protected function define_structure(): array {
         $paths = [
             new restore_path_element(
@@ -35,6 +63,12 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Method process_videotrackerpremium.
+     *
+     * @param mixed $data Parameter data.
+     * @return void Return value.
+     */
     protected function process_videotrackerpremium($data): void {
         global $DB;
 
@@ -54,6 +88,12 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         $this->set_mapping('videotrackerpremium', $oldid, $newid, true);
     }
 
+    /**
+     * Method process_videotrackerpremium_override.
+     *
+     * @param mixed $data Parameter data.
+     * @return void Return value.
+     */
     protected function process_videotrackerpremium_override($data): void {
         global $DB;
 
@@ -69,6 +109,12 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         $DB->insert_record('videotrackerpremium_override', $data);
     }
 
+    /**
+     * Method process_videotrackerpremium_history.
+     *
+     * @param mixed $data Parameter data.
+     * @return void Return value.
+     */
     protected function process_videotrackerpremium_history($data): void {
         global $DB;
 
@@ -90,6 +136,12 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         $DB->insert_record('videotrackerpremium_history', $data);
     }
 
+    /**
+     * Method process_videotrackerpremium_notify.
+     *
+     * @param mixed $data Parameter data.
+     * @return void Return value.
+     */
     protected function process_videotrackerpremium_notify($data): void {
         global $DB;
 
@@ -107,6 +159,12 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         $DB->insert_record('videotrackerpremium_notify', $data);
     }
 
+    /**
+     * Method process_videotrackerpremium_state.
+     *
+     * @param mixed $data Parameter data.
+     * @return void Return value.
+     */
     protected function process_videotrackerpremium_state($data): void {
         global $DB;
 
@@ -124,6 +182,11 @@ class restore_videotrackerpremium_activity_structure_step extends restore_activi
         $DB->insert_record('videotrackerpremium_state', $data);
     }
 
+    /**
+     * Method after_execute.
+     *
+     * @return void Return value.
+     */
     protected function after_execute(): void {
         $this->add_related_files(
             'mod_videotrackerpremium',

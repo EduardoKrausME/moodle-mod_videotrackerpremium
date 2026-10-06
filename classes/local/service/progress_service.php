@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * progress_service.php
+ *
+ * @package   mod_videotrackerpremium
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_videotrackerpremium\local\service;
 
 use completion_info;
@@ -11,6 +34,12 @@ use stdClass;
  * Reads authoritative Video Bridge progress and projects it into operational state.
  */
 class progress_service {
+    /**
+     * Method media_hash.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @return string Return value.
+     */
     public static function media_hash(stdClass $activity): string {
         if (method_exists(bridge_progress::class, 'media_hash')) {
             return bridge_progress::media_hash((string)$activity->videosource, (string)$activity->sourceconfig);
@@ -18,6 +47,14 @@ class progress_service {
         return hash('sha256', $activity->videosource . '|' . $activity->sourceconfig);
     }
 
+    /**
+     * Method get_progress_batch.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @param context_module $context Parameter context.
+     * @param array $userids Parameter userids.
+     * @return array Return value.
+     */
     public static function get_progress_batch(stdClass $activity, context_module $context, array $userids): array {
         $userids = array_values(array_unique(array_filter(array_map('intval', $userids))));
         if (!$userids) {
@@ -44,6 +81,13 @@ class progress_service {
         return $records;
     }
 
+    /**
+     * Method ensure_threshold.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @param context_module $context Parameter context.
+     * @return void Return value.
+     */
     public static function ensure_threshold(stdClass $activity, context_module $context): void {
         $arguments = [
             $context->id,
@@ -63,6 +107,15 @@ class progress_service {
         }
     }
 
+    /**
+     * Method sync_completion.
+     *
+     * @param stdClass $activity Parameter activity.
+     * @param context_module $context Parameter context.
+     * @param int $userid Parameter userid.
+     * @param ?stdClass $progress Parameter progress.
+     * @return stdClass Return value.
+     */
     public static function sync_completion(
         stdClass $activity,
         context_module $context,
