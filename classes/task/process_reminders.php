@@ -5,6 +5,7 @@ use context_module;
 use core\task\scheduled_task;
 use mod_videotrackerpremium\local\service\progress_service;
 use mod_videotrackerpremium\local\service\reminder_service;
+use mod_videotrackerpremium\local\service\recipient_guard;
 
 /**
  * Synchronises operational state and processes due reminders.
@@ -31,16 +32,7 @@ class process_reminders extends scheduled_task {
 
             $context = context_module::instance($cm->id);
             progress_service::ensure_threshold($activity, $context);
-            $users = get_enrolled_users(
-                $context,
-                'mod/videotrackerpremium:view',
-                0,
-                'u.id',
-                null,
-                0,
-                0,
-                true
-            );
+            $users = recipient_guard::get_eligible_users($context, 'u.id');
             $userids = array_map('intval', array_keys($users));
 
             if (count($userids) > 100) {
