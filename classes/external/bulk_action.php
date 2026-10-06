@@ -8,6 +8,8 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use mod_videotrackerpremium\local\service\bulk_service;
+use mod_videotrackerpremium\local\service\recipient_guard;
+use mod_videotrackerpremium\task\bulk_action_batch;
 
 /**
  * Applies an authorised bulk action.
@@ -61,10 +63,54 @@ class bulk_action extends external_api {
             '*',
             MUST_EXIST
         );
+
+        if (!in_array($params['action'], ['remind', 'extend', 'waive', 'unwaive'], true)) {
+            throw new \invalid_parameter_exception('Invalid bulk action.');
+        }
+        if ($params['action'] === 'remind') {
+            require_capability('mod/videotrackerpremium:sendreminders', $context);
+        } else {
+            require_capability('mod/videotrackerpremium:manageoverrides', $context);
+        }
+
+        $requested = array_values(array_unique(array_filter(array_map('intval', $params['userids']))));
+        if (!$requested) {
+            throw new \invalid_parameter_exception('No learners selected.');
+        }
+
+        $authorised = recipient_guard::filter_authorised($context, $requested, (int)$USER->id);
+        sort($requested);
+        sort($authorised);
+        if ($requested !== $authorised) {
+            throw new \required_capability_exception(
+                $context,
+                $params['action'] === 'remind'
+                    ? 'mod/videotrackerpremium:sendreminders'
+                    : 'mod/videotrackerpremium:manageoverrides',
+                'nopermissions',
+                ''
+            );
+        }
+
+        if (count($requested) > 100) {
+            foreach (array_chunk($requested, 100) as $chunk) {
+                $task = new bulk_action_batch();
+                $task->set_custom_data([
+                    'activityid' => (int)$activity->id,
+                    'userids' => $chunk,
+                    'action' => $params['action'],
+                    'value' => $params['value'],
+                    'actorid' => (int)$USER->id,
+                ]);
+                \core\task\manager::queue_adhoc_task($task);
+            }
+            return ['affected' => $requested, 'count' => count($requested)];
+        }
+
         $affected = bulk_service::execute(
             $activity,
             $context,
-            $params['userids'],
+            $requested,
             $params['action'],
             $params['value'],
             (int)$USER->id
