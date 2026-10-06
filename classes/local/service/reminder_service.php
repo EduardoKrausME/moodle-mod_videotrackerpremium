@@ -25,19 +25,19 @@ class reminder_service {
             'type' => $type,
             'scheduledfor' => $scheduledfor,
         ];
-        $existing = $DB->get_record('vtrackpremium_notify', $params);
+        $existing = $DB->get_record('videotrackerpremium_notify', $params);
         if ($existing) {
             if ($existing->status === 'cancelled' && empty($existing->timesent)) {
                 $existing->status = 'pending';
                 $existing->lasterror = '';
                 $existing->timemodified = time();
-                $DB->update_record('vtrackpremium_notify', $existing);
+                $DB->update_record('videotrackerpremium_notify', $existing);
             }
             return (int)$existing->id;
         }
 
         $now = time();
-        return (int)$DB->insert_record('vtrackpremium_notify', (object)($params + [
+        return (int)$DB->insert_record('videotrackerpremium_notify', (object)($params + [
             'timesent' => 0,
             'status' => 'pending',
             'attempts' => 0,
@@ -51,7 +51,7 @@ class reminder_service {
         global $DB;
 
         $records = $DB->get_records_select(
-            'vtrackpremium_notify',
+            'videotrackerpremium_notify',
             'activityid = :activityid AND userid = :userid AND status IN (:pending, :queued)',
             [
                 'activityid' => $activityid,
@@ -67,7 +67,7 @@ class reminder_service {
             $record->status = 'cancelled';
             $record->lasterror = clean_param($reason, PARAM_TEXT);
             $record->timemodified = time();
-            $DB->update_record('vtrackpremium_notify', $record);
+            $DB->update_record('videotrackerpremium_notify', $record);
         }
     }
 
@@ -79,7 +79,7 @@ class reminder_service {
         global $DB;
 
         $records = $DB->get_records_select(
-            'vtrackpremium_notify',
+            'videotrackerpremium_notify',
             'activityid = :activityid AND status IN (:pending, :queued)',
             ['activityid' => $activityid, 'pending' => 'pending', 'queued' => 'queued']
         );
@@ -90,7 +90,7 @@ class reminder_service {
             $record->status = 'cancelled';
             $record->lasterror = clean_param($reason, PARAM_TEXT);
             $record->timemodified = time();
-            $DB->update_record('vtrackpremium_notify', $record);
+            $DB->update_record('videotrackerpremium_notify', $record);
         }
     }
 
@@ -101,8 +101,8 @@ class reminder_service {
             self::cancel_user_pending((int)$activity->id, $userid, 'disabled');
             return;
         }
-        $state = $DB->get_record('vtrackpremium_state', ['activityid' => $activity->id, 'userid' => $userid]);
-        $override = $DB->get_record('vtrackpremium_override', ['activityid' => $activity->id, 'userid' => $userid]);
+        $state = $DB->get_record('videotrackerpremium_state', ['activityid' => $activity->id, 'userid' => $userid]);
+        $override = $DB->get_record('videotrackerpremium_override', ['activityid' => $activity->id, 'userid' => $userid]);
         if (($state && !empty($state->completed)) || ($override && !empty($override->waived))) {
             self::cancel_user_pending((int)$activity->id, $userid, 'notrequired');
             return;
@@ -154,7 +154,7 @@ class reminder_service {
 
         $now = time();
         $records = $DB->get_records_select(
-            'vtrackpremium_notify',
+            'videotrackerpremium_notify',
             'scheduledfor <= :now AND (' .
                 'status = :pending OR (status = :queued AND timemodified <= :stale)' .
             ')',
@@ -173,7 +173,7 @@ class reminder_service {
         $ids = [];
         foreach ($records as $record) {
             $current = $DB->get_record(
-                'vtrackpremium_notify',
+                'videotrackerpremium_notify',
                 ['id' => $record->id],
                 'id,status,timemodified',
                 IGNORE_MISSING
@@ -190,7 +190,7 @@ class reminder_service {
 
             $current->status = 'queued';
             $current->timemodified = $now;
-            $DB->update_record('vtrackpremium_notify', $current);
+            $DB->update_record('videotrackerpremium_notify', $current);
             $ids[] = (int)$current->id;
         }
         return $ids;
@@ -216,7 +216,7 @@ class reminder_service {
     private static function send_unlocked(int $notificationid): void {
         global $DB;
 
-        $notification = $DB->get_record('vtrackpremium_notify', ['id' => $notificationid]);
+        $notification = $DB->get_record('videotrackerpremium_notify', ['id' => $notificationid]);
         if (!$notification || !in_array($notification->status, ['queued', 'pending'], true)) {
             return;
         }
@@ -225,7 +225,7 @@ class reminder_service {
             $notification->status = 'cancelled';
             $notification->lasterror = 'remindersdisabled';
             $notification->timemodified = time();
-            $DB->update_record('vtrackpremium_notify', $notification);
+            $DB->update_record('videotrackerpremium_notify', $notification);
             return;
         }
 
@@ -238,7 +238,7 @@ class reminder_service {
             $notification->status = 'cancelled';
             $notification->lasterror = 'recipientnotavailable';
             $notification->timemodified = time();
-            $DB->update_record('vtrackpremium_notify', $notification);
+            $DB->update_record('videotrackerpremium_notify', $notification);
             return;
         }
 
@@ -248,7 +248,7 @@ class reminder_service {
             $notification->status = 'cancelled';
             $notification->lasterror = 'nolongerneeded';
             $notification->timemodified = time();
-            $DB->update_record('vtrackpremium_notify', $notification);
+            $DB->update_record('videotrackerpremium_notify', $notification);
             return;
         }
 
@@ -294,7 +294,7 @@ class reminder_service {
             $notification->attempts = (int)$notification->attempts + 1;
             $notification->lasterror = '';
             $notification->timemodified = time();
-            $DB->update_record('vtrackpremium_notify', $notification);
+            $DB->update_record('videotrackerpremium_notify', $notification);
 
             $event = reminder_sent::create([
                 'objectid' => $notification->id,
@@ -321,7 +321,7 @@ class reminder_service {
             } else {
                 $notification->status = 'failed';
             }
-            $DB->update_record('vtrackpremium_notify', $notification);
+            $DB->update_record('videotrackerpremium_notify', $notification);
         }
     }
 }
