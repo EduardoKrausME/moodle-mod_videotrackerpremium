@@ -138,4 +138,4 @@ $string['details'] = 'Detalhes';
 $string['historydeadline'] = 'Prazo alterado de {$a->old} para {$a->new}.';
 $string['deadlineextendedcolumn'] = 'Prazo estendido';
 $string['extended'] = 'Prazo estendido';
-$string['noactivities'] = 'Não há atividades Video Tracker Premium neste curso.';\n
+$string['noactivities'] = 'Não há atividades Video Tracker Premium neste curso.';
