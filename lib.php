@@ -81,6 +81,17 @@ function videotrackerpremium_add_instance(stdClass $data, ?mod_videotrackerpremi
     if (!empty($data->coursemodule)) {
         $context = context_module::instance((int)$data->coursemodule);
         (new source_manager())->save_files($data, $context);
+        bridge_progress::set_threshold(
+            $context->id,
+            'mod_videotrackerpremium',
+            $id,
+            bridge_progress::media_hash(
+                (string)$data->videosource,
+                (string)$data->sourceconfig
+            ),
+            (int)$data->minimumpercent,
+            'mod_videotrackerpremium'
+        );
     }
     return $id;
 }
