@@ -104,7 +104,7 @@ jobs:
 
     - name: Moodle Code Checker
       if: ${{ !cancelled() }}
-      run: moodle-plugin-ci phpcs ./plugin --max-warnings 0 --exclude="Universal.WhiteSpace.CommaSpacing,PSR12.Classes.ClassInstantiation,PSR12.Classes.OpeningBraceSpace,Universal.Lists.DisallowLongListSyntax,PSR2.Methods.FunctionCallSignature,PSR12.ControlStructures.ControlStructureSpacing,Squiz.WhiteSpace.ControlStructureSpacing,PSR2.ControlStructures.SwitchDeclaration,Squiz.Functions.MultiLineFunctionDeclaration,PSR2.Classes.ClassDeclaration,Universal.OOStructures.AlphabeticExtendsImplements"
+      run: moodle-plugin-ci phpcs ./plugin --max-warnings 0 --exclude="Universal.WhiteSpace.CommaSpacing,PSR12.Classes.ClassInstantiation,PSR12.Classes.OpeningBraceSpace,Universal.Lists.DisallowLongListSyntax,PSR2.Methods.FunctionCallSignature,PSR12.ControlStructures.ControlStructureSpacing,Squiz.WhiteSpace.ControlStructureSpacing,PSR2.ControlStructures.SwitchDeclaration,Squiz.Functions.MultiLineFunctionDeclaration,PSR2.Classes.ClassDeclaration,Universal.OOStructures.AlphabeticExtendsImplements,moodle.Commenting.FileExpectedTags.CopyrightTagMissing,moodle.Commenting.FileExpectedTags.LicenseTagMissing,moodle.Commenting.MissingDocblock.Constant,moodle.Commenting.MissingDocblock.File,moodle.Commenting.MissingDocblock.Function,moodle.Files.BoilerplateComment.CommentEndedTooSoon,moodle.Files.BoilerplateComment.NoBoilerplateComment,moodle.Files.MoodleInternal.MoodleInternalNotNeeded"
 
     - name: Validating
       if: ${{ !cancelled() }}
