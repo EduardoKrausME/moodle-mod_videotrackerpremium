@@ -71,7 +71,11 @@ class reminder_service {
         }
     }
 
-    public static function cancel_activity_pending(int $activityid, string $reason): void {
+    public static function cancel_activity_pending(
+        int $activityid,
+        string $reason,
+        bool $includecompleted = false
+    ): void {
         global $DB;
 
         $records = $DB->get_records_select(
@@ -80,7 +84,7 @@ class reminder_service {
             ['activityid' => $activityid, 'pending' => 'pending', 'queued' => 'queued']
         );
         foreach ($records as $record) {
-            if (in_array($record->type, ['manual', 'completed'], true)) {
+            if ($record->type === 'manual' || (!$includecompleted && $record->type === 'completed')) {
                 continue;
             }
             $record->status = 'cancelled';
