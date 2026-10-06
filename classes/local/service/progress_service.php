@@ -127,7 +127,9 @@ class progress_service {
             ]);
 
             reminder_service::cancel_user_pending((int)$activity->id, $userid, 'completed');
-            reminder_service::queue_completion_confirmation($activity, $userid, $now);
+            if (!empty($activity->remindersenabled)) {
+                reminder_service::queue_completion_confirmation($activity, $userid, $now);
+            }
 
             if (!empty($activity->completionrequired)) {
                 $cm = get_coursemodule_from_instance(
