@@ -19,15 +19,9 @@ $context = context_module::instance($cm->id);
 require_login($course, false, $cm);
 require_capability('mod/videotrackerpremium:export', $context);
 
-$users = get_enrolled_users(
+$users = recipient_guard::get_eligible_users(
     $context,
-    'mod/videotrackerpremium:view',
-    0,
-    'u.id,u.firstname,u.lastname,u.email',
-    null,
-    0,
-    0,
-    true
+    'u.id,u.firstname,u.lastname,u.email'
 );
 $authorised = recipient_guard::filter_authorised(
     $context,
