@@ -99,15 +99,39 @@ function videotrackerpremium_update_instance(stdClass $data, ?mod_videotrackerpr
     $previous = $DB->get_record('videotrackerpremium', ['id' => $data->id], '*', MUST_EXIST);
     videotrackerpremium_normalise_reminders($data);
     (new source_manager())->normalise_record($data);
+
+    $previoushash = bridge_progress::media_hash(
+        (string)$previous->videosource,
+        (string)$previous->sourceconfig
+    );
+    $newhash = bridge_progress::media_hash(
+        (string)$data->videosource,
+        (string)$data->sourceconfig
+    );
+    $mediachanged = $previoushash !== $newhash;
+
     $data->timemodified = time();
     $result = $DB->update_record('videotrackerpremium', $data);
 
     if (!empty($data->coursemodule)) {
         $context = context_module::instance((int)$data->coursemodule);
         (new source_manager())->save_files($data, $context, (string)$previous->videosource);
+
+        if ($mediachanged) {
+            bridge_progress::delete_consumer_media(
+                $context->id,
+                'mod_videotrackerpremium',
+                (int)$data->id,
+                $previoushash
+            );
+            $DB->delete_records('vtrackpremium_state', ['activityid' => (int)$data->id]);
+        }
     }
 
-    reminder_service::cancel_activity_pending((int)$data->id, 'activityupdated');
+    reminder_service::cancel_activity_pending(
+        (int)$data->id,
+        $mediachanged ? 'mediachanged' : 'activityupdated'
+    );
     return $result;
 }
 
