@@ -95,6 +95,7 @@ $string['messagesubject_tomorrow'] = '{$a}: prazo amanhã';
 $string['messagesubject_overdue'] = '{$a}: atrasado';
 $string['messagesubject_completed'] = '{$a}: conclusão confirmada';
 $string['messagesubject_manual'] = '{$a}: lembrete';
+$string['messageprovider:reminders'] = 'Lembretes e notificações de compliance';
 $string['taskprocessreminders'] = 'Processar lembretes do Video Tracker Premium';
 $string['privacy:metadata:override'] = 'Exceções individuais de prazo, dispensa e observações administrativas.';
 $string['privacy:metadata:history'] = 'Histórico de alterações administrativas relacionadas ao aluno.';
