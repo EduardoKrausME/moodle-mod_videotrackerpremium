@@ -8,6 +8,12 @@ Its question is intentionally different from the analytics-oriented Tracker modu
 
 Playback providers, the player, authoritative watched percentage, viewing maps and session telemetry belong to `local_video_bridge`. Video Tracker Premium does not implement provider-specific playback or maintain a second progress model.
 
+## Requirements and installation
+
+**Required dependency:** [Moodle Video Bridge (`local_video_bridge`)](https://github.com/EduardoKrausME/moodle-local_video_bridge), version `2026100618` or later. The Video Bridge plugin is not bundled with this activity; install it in `local/video_bridge` before installing or upgrading `mod_videotrackerpremium`.
+
+Video Bridge requires Moodle 4.5 or later and currently also depends on `local_ai_bridge`. Install its dependencies and complete the upgrade through **Site administration > Notifications**. An installation limited to plugins available on the Moodle Marketplace must ensure that these required plugins are available there; the activity cannot run without Video Bridge.
+
 ## Main capabilities
 
 - availability date, deadline, grace period and optional late viewing;
